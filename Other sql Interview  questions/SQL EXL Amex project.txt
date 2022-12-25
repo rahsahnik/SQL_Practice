@@ -1,0 +1,25 @@
+select count(distinct CID) as No_OF_Customer,city
+from customers 
+group by city
+order by 1 desc limit 1 ;
+
+in 2020 per month per customer find Tot trxn
+
+
+with table3 as
+(
+select c.cid as c_id, month(t.date), sum(t.amount) as spending
+from transaction t
+right join customer c on 
+t.card_no = c.card_no
+where year(t.date) = 2020
+group by c.cid,month(t.date)
+)
+
+select c_id ,sum(spending) from table3 group by c_id
+                              having sum(spending) > 10000;
+
+
+
+
+

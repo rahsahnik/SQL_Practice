@@ -1,0 +1,63 @@
+with cte as
+(
+select h.hacker_id,h.name,c.challenge_id ,
+    row_number() over (partition by h.hacker_id order by h.hacker_id ) rank
+from Hackers h
+inner join Challenges c
+on
+h.hacker_id=c.hacker_id
+
+)
+select hacker_id,name,challenge_id, max(rank) from cte group by hacker_id,name,challenge_id;
+
+--self made + inspired by other
+
+with cte as
+(
+select c.hacker_id,h.name,count(c.hacker_id) as rank 
+from Hackers h
+inner join Challenges c
+on
+h.hacker_id=c.hacker_id 
+GROUP BY c.hacker_id, h.name)
+ 
+select * from cte 
+where 
+rank =
+( select max(rank) from cte ) 
+ OR
+ rank in
+   (select rank from cte
+     group by rank
+    having count(rank)=1
+      
+    )
+order by rank desc ,hacker_id
+
+
+
+--Other person code
+
+select h.hacker_id,h.name,count(c.challenge_id) as cnt
+from Hackers h 
+join Challenges c
+on h.hacker_id=c.hacker_id
+group by c.hacker_id,h.name
+
+
+having cnt = (select MAX(tmp.cnt1) from 
+	   	  (select count(hacker_id) cnt1
+                 from Challenges
+                 group by hacker_id 
+                 order by  1 desc)tmp
+		 )
+                
+        or cnt in 
+        (select t.cnt2 from 
+           (select count(*) as cnt2 
+               from challenges
+               group by hacker_id) t
+         group by t.cnt2
+         having count(t.cnt2) = 1)
+      
+  order by 3 desc, 1              

@@ -1,0 +1,66 @@
+list1=[1,23,40]  list2=[2]
+tup1=(12,14,45)  tup2=(12,)
+
+dict1={1:'one',
+		2:'two'
+	   }
+	   
+alter table table1 
+alter column column1 int;
+
+0 1 1 2 3 5
+fn,sn=0,1
+for i in range(5):
+		nn=fn+sn
+		print(nn)
+		fn=sn
+		sn=nn
+		
+		
+		
+st='ABBCCC'
+count=0
+for i in range(len(st)):
+	for j in st:
+		if j==j+1:
+			count+=1
+		
+	print(count)
+
+
+st1=set(st)
+
+sq_odd=[i*i for i in range(5,10) if(i%2!=0)]
+
+names = ['Abcd', 'Efgh', 'Jklm', 'Nopq']
+print(names[-3][-1])  # d
+
+dix  =  {'a': 1, 'b': 2, 'c': 3, 'd': 4}
+o/p: =  {1: 'a', 2: 'b', 3: 'c', 4: 'd'}
+
+dict={}
+for key,value in dict.items():
+	key1=key
+	value1=value
+	dict1={
+
+
+
+id - name -name
+null 	2     2
+1     A     20
+1     B     20
+1     A     30
+1     B     30
+3	D     40 
+4     NULL  50
+5    
+
+
+select employee_name from employee where Manager_id in
+(select employee_id from employee ) 
+
+
+
+
+

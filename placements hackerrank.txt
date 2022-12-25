@@ -1,0 +1,27 @@
+Hackerrank Placements
+
+Write a query to output the names of those students whose best friends got offered a higher salary than them. 
+Names must be ordered by the salary amount offered to the best friends. It is guaranteed that no two students got same salary offer.
+
+select s.Name 
+                from Students s
+  inner join Packages p on s.ID=p.ID
+     left join friends f on f.Id=s.Id
+       left join Packages p2 on p2.ID=f.Friend_ID
+where p.Salary <p2.Salary
+order by p2.Salary;
+
+
+output :
+
+Stuart 
+Priyanka 
+Paige 
+Jane 
+Julia 
+Belvet 
+Amina 
+Kristeen 
+Scarlet 
+Priya 
+Meera

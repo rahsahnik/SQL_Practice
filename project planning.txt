@@ -1,0 +1,60 @@
+--SQL Project Planning
+
+If the End_Date of the tasks are consecutive, then they are part of the same project. 
+Samantha is interested in finding the total number of different projects completed.
+
+Write a query to output the start and end dates of projects listed by the number of days 
+it took to complete the project in ascending order. If there is more than one project that have
+ the same number of completion days, then order by the start date of the project.
+
+SELECT Start_Date, MIN(End_Date)
+FROM 
+
+    (SELECT Start_Date FROM Projects WHERE Start_Date NOT IN (SELECT End_Date FROM Projects)) a,
+    (SELECT End_date FROM PROJECTS WHERE end_date NOT IN (SELECT start_date FROM PROJECTS)) b
+/* At this point, we should have a list of start dates and end dates that don't necessarily correspond with each other */
+/* This makes sure we only choose end dates that fall after the start date, and choosing the MIN means for the particular start_date,
+ we get the closest end date that does not coincide with the start of another task */
+
+where start_date < end_date
+GROUP BY start_date
+ORDER BY datediff(start_date, MIN(end_date)) desc, start_date 
+
+o/p
+
+2015-10-15 2015-10-16
+2015-10-17 2015-10-18
+2015-10-19 2015-10-20
+2015-10-21 2015-10-22
+2015-11-01 2015-11-02
+2015-11-17 2015-11-18
+2015-10-11 2015-10-13
+2015-11-11 2015-11-13
+2015-10-01 2015-10-05
+2015-11-04 2015-11-08
+2015-10-25 2015-10-31
+
+
+------------
+
+For MS SQL users:
+
+SELECT T1.Start_Date,T2.End_Date 
+FROM ( SELECT Start_Date,ROW_NUMBER() OVER (ORDER BY Start_Date) RN 
+		FROM Projects WHERE Start_Date NOT IN (SELECT END_Date FROM Projects) ) AS T1 
+INNER JOIN (
+
+SELECT End_Date,ROW_NUMBER() OVER (ORDER BY End_Date) RN 
+FROM Projects WHERE End_Date NOT IN (SELECT Start_Date FROM Projects)) AS T2
+ ON T1.RN = T2.RN 
+ORDER BY DATEDIFF(Day,T1.Start_Date,T2.End_Date),T1.Start_Date
+
+Note :
+
+The way to solve this problem is to find Start_date that is not in End_Date and End_Date that is not in Start_Date.
+Why? because if a Start_date is not in EndDate, it means it is a new project. And if a End_Date is not in Start_Date,
+ it means this End_Date is the End_Date of a project.
+We Gerenate a row number and Order by start_date so that it can match the Project's EndDate.
+Same logic, We Gerenate a row number and Order by End_date so that it can match the Project's StartDate.
+If a rownumber from Start_Date match the rownumber from End_Date, they must be the start_Date and End_Date in the same project.
+

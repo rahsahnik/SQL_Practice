@@ -1,0 +1,15 @@
+with cte as (
+select * from c.covid 
+join  cc.country on c.city=cc.city 
+)
+cte2 as(
+select *,sum(population) as coutry_population from cte 
+group by country)
+
+select * from cte2 where country_population >10000000 and c.active_cases>100 ;
+
+with cte as(
+select emp_name,age,
+row_number() over(order by age desc) age_rank
+)
+select * from cte where age_rank=5;

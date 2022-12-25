@@ -1,0 +1,67 @@
+Question : Ollivander's Inventory (hackerrank)
+
+--CTE
+
+with CTE as
+(
+    select w.id,p.age,w.coins_needed,w.power,
+    ROW_NUMBER()  over (partition by w.power,p.age order by w.coins_needed) rank
+    from Wands w 
+join
+Wands_property p on
+w.code=p.code
+where p.is_evil=0 )
+select
+    id,
+    age,
+    coins_needed,
+    power
+from CTE
+where rank = 1
+order by power desc, age desc
+
+
+
+with ranking as
+(select
+    w.id,
+    wp.age,
+    w.coins_needed,
+    w.power,
+    rank () over (partition by wp.age, w.power order by w.coins_needed asc, w.power desc) rank
+from wands w
+left join wands_property wp on wp.code = w.code
+where wp.is_evil = 0)
+
+select
+    id,
+    age,
+    coins_needed,
+    power
+from ranking
+where rank = 1
+order by power desc, age desc
+
+
+
+--Temp table :
+
+SELECT id, age, coins_needed, power
+       		 -- We have to make a temp_table because we will be adding a new column named 'rank', but we only 
+			 --need 4 columns (id, age, coins_needed, power) for the output. The temp_table will do all the work, satisfy all conditions.
+FROM
+    (
+    SELECT
+        id, age, coins_needed, power,
+        				-- Now with each group of wands with the same power and age, we will order rows by coins_needed and rank the cheapest wand in that group as rank #1.
+        ROW_NUMBER() OVER(PARTITION BY power, age ORDER BY coins_needed) AS rank
+    					-- Now join 2 tables to have all essential columns
+    FROM Wands AS a
+    INNER JOIN Wands_Property AS b
+    ON a.code = b.code
+    WHERE is_evil = 0           -- Select non_evil wands
+    ) AS temp_table
+WHERE rank = 1                 -- Only select rows with rank = 1, we will have the cheapest wand among wands with the same power and age.
+ORDER BY power DESC, age DESC
+
+

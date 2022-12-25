@@ -1,0 +1,68 @@
+create table bill
+( 
+  type varchar(5),
+  num varchar(12),
+  dur int
+);
+  
+  insert into bill values
+  ('OUT',1818,13),
+  ('IN', 1818,10),
+  ('OUT',1818,7),
+  ('OUT',1817,15),
+  ('IN',1817,18),
+  ('IN',1819,18),
+  ('OUT',1819,40),
+  ('IN',1819,18)
+
+MY solution not working :
+
+select a.num
+from 
+(select num,sum(dur) as D
+ from bill  
+ where type ='OUT'
+ group by num) a ,
+
+(select num,sum(dur) as D
+ 		from bill  
+ 		 where type ='IN'
+			group by num) b 
+        
+where a.D > b.D
+group by a.num
+order by 1
+
+MY Working :
+
+select num from 
+
+(select num ,
+ case  WHEN type ='OUT' then dur else 0 end as O,
+ case when type='IN' then dur else 0   end   as I
+ from bill
+ )temp
+ 
+ group by num
+ having sum(O) > sum(I)
+
+Working solution , below are 2 of them :
+
+SELECT num
+FROM (
+    SELECT num,
+           SUM(CASE WHEN type = 'OUT' THEN dur ELSE 0 END) outval, 
+           SUM(CASE WHEN type = 'IN' THEN dur ELSE 0 END) inval
+    FROM bill  
+    WHERE type in ('IN','OUT')
+    GROUP BY num
+) t1
+WHERE outval > inval
+
+---------------
+
+SELECT num
+FROM bill
+GROUP BY num
+HAVING SUM(CASE WHEN type = 'OUT' THEN dur ELSE 0 END) > SUM(CASE WHEN type = 'IN' THEN dur ELSE 0 END);
+

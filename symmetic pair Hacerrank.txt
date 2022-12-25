@@ -1,0 +1,20 @@
+Q: Symmetric Pairs
+
+select f.X,f.Y from Functions f
+join 
+Functions f1 on f.X=f1.Y AND f.Y=f1.X
+group by f.X,f.Y
+having f.X<f.Y OR count(f.X)>1
+order by f.X
+
+output 
+
+2 24 
+4 22 
+5 21 
+6 20 
+8 18 
+9 17 
+11 15
+13 13
+

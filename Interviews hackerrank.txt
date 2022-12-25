@@ -1,0 +1,30 @@
+Q: interviews
+
+select con.contest_id, con.hacker_id, con.name,sum(total_submissions), 
+sum(total_accepted_submissions), sum(total_views),sum(total_unique_views)
+from Contests con
+join  Colleges c on con.contest_id = c.contest_id
+join  Challenges cc on c.college_id = cc. college_id
+left join 
+        (select challenge_id,sum(total_views) as total_views ,
+         sum(total_unique_views) as   total_unique_views
+         from View_Stats
+         group by challenge_id ) v 
+      on cc.challenge_id = v.challenge_id
+left join 
+           (select challenge_id,sum(total_submissions) as total_submissions ,
+            sum(total_accepted_submissions)  as total_accepted_submissions
+            from Submission_Stats
+            group by challenge_id) s
+      on cc.challenge_id = s.challenge_id
+
+group by 1,2,3
+having sum(total_submissions)>0 or sum(total_accepted_submissions)>0 
+or sum(total_views)>0 or sum(total_unique_views)>0
+order by 1
+
+o/p sample :
+
+66406 17973 Rose 111 39 156 56
+66556 79153 Angela 0 0 11 10
+94828 80275 Frank 150 38 41 15

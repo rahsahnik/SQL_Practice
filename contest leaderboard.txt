@@ -1,0 +1,23 @@
+-- select s.hacker_id,h.name,sum(s.score) as total
+-- from Hackers h
+-- join Submissions s on
+-- h.hacker_id=s.hacker_id
+-- group by s.hacker_id,h.name
+-- having sum(s.score)>0
+-- order by 3 desc; 
+
+with cte as
+(
+select s.hacker_id,h.name,s.challenge_id,s.score,
+row_number() over (partition by s.hacker_id,s.challenge_id order by s.score desc) as rank
+from Submissions s 
+    join 
+     Hackers h 
+    on h.hacker_id=s.hacker_id
+where score>0
+)
+select hacker_id,name,sum(score)
+from cte 
+where rank=1
+group by hacker_id,name 
+order by 3 desc,1
